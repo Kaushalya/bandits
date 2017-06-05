@@ -17,6 +17,8 @@ class Agent(object):
         self.action_attempts = np.zeros(self.k)
         self.t = 0
         self.last_action = None
+        self.arms = np.arange(0, self.k)
+        self.active_arms = np.ones(self.k, dtype=bool)
 
     def __str__(self):
         return 'f/{}'.format(str(self.policy))
@@ -29,6 +31,7 @@ class Agent(object):
         self.action_attempts[:] = 0
         self.last_action = None
         self.t = 0
+        self.active_arms = np.ones(self.k, dtype=bool)
 
     def choose(self):
         action = self.policy.choose(self)
