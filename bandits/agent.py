@@ -137,3 +137,13 @@ class BetaAgent(Agent):
     @property
     def beta(self):
         return self._prior.distribution.beta
+
+class NetworkExploringAgent(Agent):
+    def __init__(self, bandit, policy, prior=0, alpha=0.1, baseline=True):
+        super(NetworkExploringAgent, self).__init__(bandit, policy)
+
+    def observe(self, reward):
+        super(NetworkExploringAgent, self).observe(reward)
+
+        print("Not implemented")
+    #TODO cluster updating happens here

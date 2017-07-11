@@ -76,8 +76,21 @@ class UCBPolicy(Policy):
         return 'UCB (c={})'.format(self.c)
 
     def choose(self, agent):
-        exploration = np.log(agent.t+1) / agent.action_attempts
-        exploration[np.isnan(exploration)] = 0
+        if np.any(agent.action_attempts==0):
+            matches = np.where((agent.action_attempts==0) & agent.active_arms)[0]
+            if np.size(matches)>0:
+                return matches[0]
+
+        #exploration = np.log(agent.t+1) / agent.action_attempts
+        #exploration[agent.active_arms == False] = np.nan
+        exploration = np.empty_like(agent.value_estimates, dtype=float)
+        for idx, num_attempts in enumerate(agent.action_attempts):
+            if agent.active_arms[idx]:
+                exploration[idx] = np.log(agent.t+1) / num_attempts
+            else:
+                exploration[idx] = np.nan
+
+        #exploration[np.isnan(exploration)] = 0
         exploration = np.power(exploration, 1/self.c)
 
         q = agent.value_estimates + exploration
@@ -99,7 +112,7 @@ class SoftmaxPolicy(Policy):
         return 'SM'
 
     def choose(self, agent):
-        a = agent.value_estimates
+        a = agent.value_estimates[agent.active_arms]
         pi = np.exp(a) / np.sum(np.exp(a))
         cdf = np.cumsum(pi)
         s = np.random.random()

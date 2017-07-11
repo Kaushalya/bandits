@@ -27,10 +27,8 @@ class Environment(object):
                 for i, agent in enumerate(self.agents):
                     action = agent.choose()
                     response = self.bandit.pull(action)
-                    if not response.active:
-                        agent.active_arms[action] = False
-                        agent.value_estimates[action] = -1*np.inf
-                        #print("arm %d is removed" % action)
+                    if response.active_arms is not None:
+                        agent.active_arms = response.active_arms
                     agent.observe(response.reward)
 
                     scores[t, i] += response.reward
