@@ -76,6 +76,7 @@ class UCBPolicy(Policy):
         return 'UCB (c={})'.format(self.c)
 
     def choose(self, agent):
+        #TODO can this be changed with a simple logic?
         if np.any(agent.action_attempts==0):
             matches = np.where((agent.action_attempts==0) & agent.active_arms)[0]
             if np.size(matches)>0:
@@ -94,6 +95,9 @@ class UCBPolicy(Policy):
         exploration = np.power(exploration, 1/self.c)
 
         q = agent.value_estimates + exploration
+
+        # print("mean rewards: "+str(agent.value_estimates))
+        # print("upper bounds: "+str(q))
         action = np.nanargmax(q)
         check = np.where(q == action)[0]
         if len(check) == 0:
